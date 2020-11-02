@@ -10,7 +10,12 @@
 #include "assets/background_night_32.h"
 #include "assets/car.h"
 
-#define SB_SIZE sizeof(SCREENBLOCK)
+#define SHARED_CB 0
+
+#define NIGHT_SKY_SBB 26
+#define LIGHT_SBB 28
+#define CAR_SBB 30
+
 #define BLD_MODE_ACTIVE 1
 
 OBJ_ATTR _obj_buffer[128];
@@ -22,12 +27,7 @@ FIXED _player_y;
 
 FIXED _speed = (FIXED)(2.5f*FIX_SCALEF);
 
-int facing = 0;
-
-int night_sky_sb = 26;
-int light_sb = 28;
-int car_sb = 30;
-int shared_cb = 0;
+bool facing_left = false;
 
 void game_loop() {
 	FIXED bg_pos_x = 0;
@@ -40,15 +40,15 @@ void game_loop() {
 		REG_BG0HOFS = fx2int(bg_pos_x);
 		REG_BG2HOFS = fx2int(bg_pos_x);
 
-		if(facing) {
+		if(facing_left) {
 			if(key_hit(KEY_RIGHT)) {
 				_player->attr1 ^= ATTR1_HFLIP;
-				facing = 0;
+				facing_left = false;
 			}
 		} else {
 			if(key_hit(KEY_LEFT)) {
 				_player->attr1 ^= ATTR1_HFLIP;
-				facing = 1;
+				facing_left = true;
 			}
 		}
 
@@ -97,16 +97,17 @@ void init() {
 	REG_BG0VOFS = 0;
 
 	// Set bkg reg
-	REG_BG0CNT = BG_PRIO(0) | BG_8BPP | BG_SBB(light_sb) 	 | BG_CBB(shared_cb) | BG_AFF_32x32;
-	REG_BG1CNT = BG_PRIO(2) | BG_8BPP | BG_SBB(night_sky_sb) | BG_CBB(shared_cb);
-	REG_BG2CNT = BG_PRIO(1) | BG_8BPP | BG_SBB(car_sb) 		 | BG_CBB(shared_cb) | BG_AFF_32x32;
+	REG_BG0CNT = BG_PRIO(0) | BG_8BPP | BG_SBB(LIGHT_SBB) 	 	| BG_CBB(SHARED_CB) | BG_AFF_32x32;
+	REG_BG1CNT = BG_PRIO(2) | BG_8BPP | BG_SBB(NIGHT_SKY_SBB) 	| BG_CBB(SHARED_CB);
+	REG_BG2CNT = BG_PRIO(1) | BG_8BPP | BG_SBB(CAR_SBB) 	 	| BG_CBB(SHARED_CB) | BG_AFF_32x32;
 
 	REG_DISPCNT =  DCNT_OBJ | DCNT_BG0 | DCNT_BG1 | DCNT_BG2 | DCNT_OBJ_1D;
 
+	//Set Blend reg
 	REG_BLDCNT = BLD_BUILD(
-		BLD_BG0,  				// Top layers
-        BLD_BG1 | BLD_BG2 | BLD_OBJ,      // Bottom layers
-        BLD_MODE_ACTIVE			// Mode
+		BLD_BG0,  						// Top layers
+        BLD_BG1 | BLD_BG2 | BLD_OBJ, 	// Bottom layers
+        BLD_MODE_ACTIVE					// Mode
 	);
 
 	// Update blend weights
