@@ -1,0 +1,11 @@
+bin/
+build/
+source/assets
+log/
+
+assets/whale/*.png
+
+assets/out.png
+__debug_bin
+
+*.png
