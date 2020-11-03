@@ -78,11 +78,11 @@ void game_loop() {
 
 void init() {
 	dma3_cpy(pal_bg_mem, bkg_sharedPal, bkg_sharedPalLen);
-	dma3_cpy(&tile_mem[shared_cb], bkg_sharedTiles, bkg_sharedTilesLen);
+	dma3_cpy(&tile_mem[SHARED_CB], bkg_sharedTiles, bkg_sharedTilesLen);
 
-	dma3_cpy(&se_mem[night_sky_sb], background_night_32Map, background_night_32MapLen);
-	dma3_cpy(&se_mem[light_sb], background_light_32Map, background_light_32MapLen);
-	dma3_cpy(&se_mem[car_sb], carMap, carMapLen);
+	dma3_cpy(&se_mem[NIGHT_SKY_SBB], background_night_32Map, background_night_32MapLen);
+	dma3_cpy(&se_mem[LIGHT_SBB], background_light_32Map, background_light_32MapLen);
+	dma3_cpy(&se_mem[CAR_SBB], carMap, carMapLen);
 
 	dma3_cpy(&tile_mem[4][0], whaleTiles, whaleTilesLen);
 	dma3_cpy(pal_obj_mem, spriteSharedPal, spriteSharedPalLen);
@@ -113,7 +113,7 @@ void init() {
 	// Update blend weights
 	//Left EVA: Top weight max of 15 (4 bits)
 	//Right EVB: Bottom wieght max of 15 (4 bits)
-	REG_BLDALPHA = BLDA_BUILD(0, 5);
+	REG_BLDALPHA = BLDA_BUILD(3, 5);
 	REG_BLDY = BLDY_BUILD(0);
 
 	_player_x = int2fx(SCREEN_WIDTH / 2 - 32 /2);

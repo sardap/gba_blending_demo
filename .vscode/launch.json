@@ -10,7 +10,7 @@
 			"request": "launch",
 			"program": "mGBA.exe",
 			"args": [
-				"${workspaceFolder}\\bin\\ecs.gba"
+				"${workspaceFolder}\\bin\\bld_demo.gba"
 			]
 		}
 	]
