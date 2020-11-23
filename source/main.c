@@ -30,12 +30,15 @@ FIXED _speed = (FIXED)(2.5f*FIX_SCALEF);
 bool facing_left = false;
 
 void game_loop() {
-	FIXED bg_pos_x = 0;
+	FIXED bg_pos_x = int2fx(400);
+	FIXED eva_weight = int2fx(3);
+	int count = 0;
 
 	while(1)
 	{
 		vid_vsync();
 		key_poll();
+		count++;
 
 		REG_BG0HOFS = fx2int(bg_pos_x);
 		REG_BG2HOFS = fx2int(bg_pos_x);
@@ -73,6 +76,14 @@ void game_loop() {
 		oam_copy(oam_mem, _obj_buffer, 1);
 
 		bg_pos_x += float2fx(0.5f);
+		// if(count % 60 == 0) {
+		// 	eva_weight += int2fx(1);
+		// 	if(fx2int(eva_weight) > 15) {
+		// 		eva_weight = 0;
+		// 	}
+		// }
+
+		// REG_BLDALPHA = BLDA_BUILD(fx2int(eva_weight), 5);
 	}
 }
 
@@ -90,7 +101,7 @@ void init() {
 	obj_set_attr(_player,
 		ATTR0_SQUARE | ATTR0_8BPP,
 		ATTR1_SIZE_32,
-		ATTR2_PALBANK(0) | ATTR2_PRIO(1) | 0
+		ATTR2_PALBANK(0) | ATTR2_PRIO(2) | 0
 	);
 
 	REG_BG0HOFS = 0;
@@ -98,10 +109,10 @@ void init() {
 
 	// Set bkg reg
 	REG_BG0CNT = BG_PRIO(0) | BG_8BPP | BG_SBB(LIGHT_SBB) 	 	| BG_CBB(SHARED_CB) | BG_AFF_32x32;
-	REG_BG1CNT = BG_PRIO(2) | BG_8BPP | BG_SBB(NIGHT_SKY_SBB) 	| BG_CBB(SHARED_CB);
+	REG_BG1CNT = BG_PRIO(3) | BG_8BPP | BG_SBB(NIGHT_SKY_SBB) 	| BG_CBB(SHARED_CB);
 	REG_BG2CNT = BG_PRIO(1) | BG_8BPP | BG_SBB(CAR_SBB) 	 	| BG_CBB(SHARED_CB) | BG_AFF_32x32;
 
-	REG_DISPCNT =  DCNT_OBJ | DCNT_BG0 | DCNT_BG1 | DCNT_BG2 | DCNT_OBJ_1D;
+	REG_DISPCNT =  DCNT_BG0 | DCNT_BG1 | DCNT_BG2 | DCNT_OBJ | DCNT_OBJ_1D;
 
 	//Set Blend reg
 	REG_BLDCNT = BLD_BUILD(
@@ -113,6 +124,7 @@ void init() {
 	// Update blend weights
 	//Left EVA: Top weight max of 15 (4 bits)
 	//Right EVB: Bottom wieght max of 15 (4 bits)
+	// REG_BLDALPHA = BLDA_BUILD(3, 5);
 	REG_BLDALPHA = BLDA_BUILD(3, 5);
 	REG_BLDY = BLDY_BUILD(0);
 
